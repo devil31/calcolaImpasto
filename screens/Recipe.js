@@ -5,7 +5,7 @@ import RecipeList from '../components/RecipeList'
 
 const Recipe = ({ route }) => {
   
-    const { Floor, NameImpasto, Water, idrat,liev,tempa,hliev,hFridge } = route.params
+    const { Floor, NameImpasto, Water, idrat,liev,tempa,hliev,hFridge,} = route.params
     
     
     return (
@@ -18,8 +18,7 @@ const Recipe = ({ route }) => {
                <RecipeList title={'H/Lievitazione'} value={hliev} misure={'/h'}/>
                <RecipeList title={'H/In Frigo'} value={hFridge} misure={'/h'}/>
                <RecipeList title={'Temp Ambiente'} value={tempa} misure={'°'}/>
-            
-              
+                         
         </ScrollView>
     
     )

@@ -2,24 +2,28 @@ import axios from 'axios'
 import React, { useEffect, useState } from 'react'
 import { View, Text, StyleSheet, TouchableOpacity, Modal, Pressable, Image, ActivityIndicator } from 'react-native'
 import { Ionicons } from '@expo/vector-icons';
+import { useSelector } from 'react-redux';
+
 
 const Saved = ({ navigation }) => {
   const [SaveData, setSaveData] = useState([]);
   const [modaladvise, setModalAdvise] = useState(false)
   const [loading, setLoading] = useState(true)
 
-useEffect(() => {
-      fetchData()
+
+  useEffect(() => {
+    fetchData()
   }, [SaveData])
- 
+
+
+  const stateId = useSelector(state => state.authUser.userId)
+  
+
 
   const fetchData = async () => {
-    
     try {
-      
       const responce = await axios.get('https://calcpizza-default-rtdb.europe-west1.firebasedatabase.app/Saved.json')
       const SaveList = [];
-
       for (let key in responce.data) {
         SaveList.push({
           NameImpasto: responce.data[key].NameImpasto,
@@ -30,27 +34,35 @@ useEffect(() => {
           tempa: responce.data[key].tempa,
           hliev: responce.data[key].hliev,
           hFridge: responce.data[key].hFridge,
+          Id:responce.data[key].Id,
           key: key,
+
+          
+        
         })
       }
       await setSaveData(SaveList)
-     await setLoading(false)
+      await setLoading(false)
     } catch (error) {
       console.warn(error)
-    } 
-    
+    }
+
   }
 
- 
+
   const canc = async (item) => {
     setModalAdvise(!modaladvise)
     await axios.delete(`https://calcpizza-default-rtdb.europe-west1.firebasedatabase.app/Saved/${item}.json`)
 
   }
+ 
+
+  const filtered = SaveData.filter(item=>item.Id == stateId)
+ 
 
 
   const renderSaveData = () => {
-    return SaveData.map((item, index) => {
+    return filtered.map((item, index) => {
       return (
 
         <TouchableOpacity key={index} style={styles.containerItem} onPress={() => navigation.navigate("Recipe", {
@@ -62,6 +74,7 @@ useEffect(() => {
           tempa: item.tempa,
           hliev: item.hliev,
           hFridge: item.hFridge,
+          Id:item.Id,
 
         })}>
           <View>
@@ -88,7 +101,7 @@ useEffect(() => {
                 </Pressable>
 
                 <View style={styles.titleAdvise}>
-                  <Text style={{ fontSize: 16, fontFamily: 'sans-serif-light', fontWeight: 'bold',color:'grey' }}>Sicuro di voler Eliminare ? </Text>
+                  <Text style={{ fontSize: 16, fontFamily: 'sans-serif-light', fontWeight: 'bold', color: 'grey' }}>Sicuro di voler Eliminare ? </Text>
                 </View>
 
                 <View style={styles.choice}>
@@ -122,13 +135,13 @@ useEffect(() => {
   }
 
   return (
-    
-    <View style={styles.container}>    
-    {loading ? <View style={{flex:1,justifyContent:'center'}}><ActivityIndicator size={50} color='orange'/></View>  :
-      SaveData == '' ? <View style={styles.nodata}>
-        <Text style={{ fontSize: 20, fontFamily: 'sans-serif-light' }}>Nessun Impasto Salvato</Text>
-        <Image resizeMode={'center'} style={{ width: '80%', height: '40%',marginRight:'10%' }} source={require('../img/pizza.gif')} />
-      </View> : renderSaveData()}
+
+    <View style={styles.container}>
+      {loading ? <View style={{ flex: 1, justifyContent: 'center' }}><ActivityIndicator size={50} color='orange' /></View> :
+        filtered == '' ? <View style={styles.nodata}>
+          <Text style={{ fontSize: 20, fontFamily: 'sans-serif-light' }}>Nessun Impasto Salvato</Text>
+          <Image resizeMode={'center'} style={{ width: '80%', height: '40%', marginRight: '10%' }} source={require('../img/pizza.gif')} />
+        </View> : renderSaveData()}
     </View>
   )
 }

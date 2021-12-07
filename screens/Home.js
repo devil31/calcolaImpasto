@@ -6,7 +6,8 @@ import Results from '../components/Results'
 import Modalinfo from '../components/Modalinfo'
 import { Ionicons } from '@expo/vector-icons'
 import { TextInput, TouchableOpacity } from 'react-native-gesture-handler'
-import axios from 'axios'
+import axios from 'axios';
+import { useSelector } from 'react-redux';
 
 
 
@@ -27,6 +28,9 @@ const Home = ({ navigation }) => {
     const [modalVisible, setModalVisible] = useState(false)
     const [modalSave, setModalSave] = useState(false)
     const [NameImpasto, setNameIpasto] = useState('')
+    const Id = useSelector(state => state.authUser.userId)
+    
+   
 
 
 
@@ -67,10 +71,9 @@ const Home = ({ navigation }) => {
     }
 
 
-    const Save = () => {
-        setModalSave(true)
-
-    }
+    const Save = () => {      
+            setModalSave(true)
+            }
     const Saved = () => {
         try {
             axios.post('https://calcpizza-default-rtdb.europe-west1.firebasedatabase.app/Saved.json', {
@@ -83,6 +86,7 @@ const Home = ({ navigation }) => {
                 tempa: tempa,
                 hliev: hliev,
                 hFridge: hFridge,
+                Id:Id,
             })
         } catch (error) {
             console.warn(error)
@@ -102,7 +106,7 @@ const Home = ({ navigation }) => {
 
             <View style={styles.firstModule}>
 
-                <Module2 title="N panetti" input={(e) => { setNpan(parseInt(e)) }} defValue={nPan.toString()} add={()=>setNpan(nPan+1)} remove={()=>setNpan(nPan-1)} error={nPan<=0 ? 'solo valori positivi':""}/>
+                <Module2 title="N° panetti" input={(e) => { setNpan(parseInt(e)) }} defValue={nPan.toString()} add={()=>setNpan(nPan+1)} remove={()=>setNpan(nPan-1)} error={nPan<=0 ? 'solo valori positivi':""}/>
                 <Module2 title="Peso Panetti" input={(e) => { setWhPan(parseInt(e)) }} defValue={whPan.toString()} add={()=>setWhPan(whPan+5)} remove={()=>setWhPan(whPan-5)} error={whPan<=0?'inserisci valori positivi':""}/>
             </View>
 
